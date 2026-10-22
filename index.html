@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <script src="https://adsun.io/adsun.min.js"></script>
+  <title>Adsun example</title>
+  <style>body{font-family:system-ui;padding:24px;max-width:420px;margin:auto}button{padding:14px 18px;font-size:16px;border-radius:12px;border:0;background:#2481cc;color:#fff;width:100%}</style>
+</head>
+<body>
+  <h1 style="text-align:center"><span id="score">0</span></h1>
+  <button id="tap" style="height:200px;font-size:48px">👆</button>
+  <p></p>
+  <button id="boost">Watch ad → 2× for 30 s</button>
+<script>
+  const tg = window.Telegram?.WebApp; tg?.ready(); tg?.expand();
+  const ad = window.Adsun.init({ blockId: "YOUR_BLOCK_ID", debug: true });
+  let score = 0, boostUntil = 0;
+  const $ = (id) => document.getElementById(id);
+  $("tap").onclick = () => {
+    score += Date.now() < boostUntil ? 2 : 1;
+    $("score").textContent = score;
+    tg?.HapticFeedback?.impactOccurred("light");
+  };
+  $("boost").onclick = () => ad.show()
+    .then(() => { boostUntil = Date.now() + 30000; })
+    .catch((r) => tg?.showAlert?.("No ad available: " + r.description));
+</script>
+</body>
+</html>
